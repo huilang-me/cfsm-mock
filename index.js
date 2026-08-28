@@ -74,6 +74,9 @@ const SERVERS_PER_GROUP = 12;
 
 const LONG_HISTORY_POINTS = 120;
 
+const SHORT_HISTORY_POINTS = 20;
+const MEDIUM_HISTORY_POINTS = 60;
+
 const LATENCY_WINDOW_POINTS = 20;
 const LATENCY_WINDOW_HOURS = 2;
 
@@ -1841,7 +1844,8 @@ function handleServer(
 
 function createHistory(
   server,
-  hours
+  hours,
+  points = LONG_HISTORY_POINTS
 ) {
 
   const result = [];
@@ -1859,14 +1863,14 @@ function createHistory(
   const interval =
     (now - start) /
     Math.max(
-      LONG_HISTORY_POINTS - 1,
+      points - 1,
       1
     );
 
 
   for (
     let i = 0;
-    i < LONG_HISTORY_POINTS;
+    i < points;
     i++
   ) {
 
@@ -1915,7 +1919,7 @@ function createHistory(
 
 
     const pointOffset =
-      LONG_HISTORY_POINTS -
+      points -
       i;
 
 
@@ -2115,6 +2119,22 @@ function createHistory(
 }
 
 
+function getHistoryPoints(hours) {
+
+  if (hours <= 0.167) {
+    return SHORT_HISTORY_POINTS;
+  }
+
+
+  if (hours <= 0.5) {
+    return MEDIUM_HISTORY_POINTS;
+  }
+
+
+  return LONG_HISTORY_POINTS;
+}
+
+
 /* ============================================================
  * /api/history/all
  * ========================================================== */
@@ -2235,7 +2255,10 @@ function handleHistory(
     env,
     createHistory(
       server,
-      closest
+      closest,
+      getHistoryPoints(
+        closest
+      )
     )
   );
 }
