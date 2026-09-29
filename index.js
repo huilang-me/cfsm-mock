@@ -981,15 +981,7 @@ function createServer(
         ? "0"
         : "1",
 
-    boot_time:
-      String(
-        now -
-          randInt(
-            1,
-            180
-          ) *
-          86400000
-      ),
+    boot_time: 1780272000000 -randInt(1, 180) * 86400000,
 
     last_updated:
       now,
